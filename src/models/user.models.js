@@ -1,13 +1,21 @@
 import {v4 as uuidv4} from 'uuid';
 
-class user {
-    constructor(id = uuidv4, name, email, password, createdAt, updatedAt) {
-        this.id = id;
+
+class userModels{
+    
+    constructor(
+        name, 
+        email, 
+        password
+        ){
+        this.id = uuidv4();
         this.name = name;
         this.email = email;
         this.password = password;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.createdAt = Date();
+        this.updatedAt = Date();
+        this.isAdmin = Boolean(false);
     }
 }
-export default new user();
+
+export default userModels;

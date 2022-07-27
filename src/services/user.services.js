@@ -1,38 +1,49 @@
-import user from '../models/user.models';
+import userModels from '../models/user.models';
+import users from '../database/database';
+import * as bcrypt from 'bcryptjs';
+import bcrypt from 'bcryptjs/dist/bcrypt';
 
 class userServices{
-    constructor(){
-        this.user = user;
+
+    static async getAllUsers(){
+        return users;
     }
 
-    static async getAll(){
-        return await this.user;
-    }
-
-    static async getById(id){
-        return await this.user.find((user) => user.id === id);
-    }
-
-    static async create(user){
-        return await this.user.push(user);
-    }
-
-    static async update(id, user){
-        const userIndex = this.user.findIndex((user) => user.id === id);
-        if(user !== -1){
-            this.user = [...this.user.slice(0, userIndex), user, ...this.user.slice(userIndex + 1)];
-            return user;
+    static async createUser(user){
+        const data = {
+            name: user.name,
+            email: user.email,
+            password: await bcrypt.hash(user.password, 10),
         }
-        return "Usuario Não Encontrado!";
+        const newUser = new userModels(data.name, data.email, data.password);
+        users.push(newUser);
+        return newUser;
     }
 
-    static async delete(id){
-        const user = this.user.find((user) => user.id === id);
-        if(!user)
-            return "Usuario Não Encontrado!";
-        return this.splice(user, 1);
+    static async getUserById(id){
+        const user = users.find(user => user.id === id);
+        return user;
+    }
 
+    static async updateUser(id, user){
+        const userToUpdate = users.find(user => user.id === id);
+        userToUpdate.name = user.name;
+        userToUpdate.email = user.email;
+        userToUpdate.isAdmin = user.isAdmin;
+        userToUpdate.password = await bcrypt.hash(user.password, 10);
+        userToUpdate.updatedAt = Date();
+        return userToUpdate;
+    }
+
+    static async deleteUser(id){
+        const userToDelete = users.find(user => user.id === id);
+
+        if(userToDelete){
+            users.splice(users.indexOf(userToDelete), 1);
+            return "User deleted successfully";  
+        }                  
+        return "Usuario Não encontrado";
     }
 }
 
-export default new userServices();
+export default userServices;

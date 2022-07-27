@@ -1,40 +1,37 @@
 import userServices from "../services/user.services";
-
-
 class userController{
-    constructor(){
-        this.userServices = userServices;
+
+   static async getAllUsers(req, res){
+         const user =  await userServices.getAllUsers();
+        return res.status(200).json(user);
+        
     }
 
-    static async getAll(req, res){
-        const users = await this.userServices.getAll();
-        return res.json(users);
-    }
-
-    static async getById(req, res){
-        const id = req.params.id;
-        const user = await this.userServices.getById(id);
-        return res.json(user);
-    }
-
-    static async create(req, res){
+    static async createUser(req, res){
         const user = req.body;
-        const newUser = await this.userServices.create(user);
-        return res.json(newUser);
+        const newUser = await userServices.createUser(user);
+        return res.status(201).json(newUser);
     }
 
-    static async update(req, res){
+    static async getUserById(req, res){
+        const id = req.params.id;
+        const user = await userServices.getUserById(id);
+        return res.status(200).json(user);
+    }
+
+    static async updateUser(req, res){
         const id = req.params.id;
         const user = req.body;
-        const updatedUser = await this.userServices.update(id, user);
-        return res.json(updatedUser);
+        const token = req.headers.authorization;
+        const updatedUser = await userServices.updateUser(id, user);
+        return res.status(200).json(updatedUser);
     }
 
-    static async delete(req, res){
+    static async deleteUser(req, res){
         const id = req.params.id;
-        const deletedUser = await this.userServices.delete(id);
-        return res.json(deletedUser);
+        const user = await userServices.deleteUser(id);
+        return res.status(200).json(user);
     }
 }
 
-export default new userController();
+export default userController;
